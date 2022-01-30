@@ -8,6 +8,7 @@ using System.Linq;
 using System.Reflection;
 using NUnit.Compatibility;
 using NUnit.Framework.Interfaces;
+using NUnit.Framework.Internal.Builders;
 
 namespace NUnit.Framework.Internal
 {
@@ -294,7 +295,7 @@ namespace NUnit.Framework.Internal
                     // Otherwise we just get the attributes
                     _actions = Method == null && TypeInfo != null
                         ? GetActionsForType(TypeInfo.Type)
-                        : GetCustomAttributes<ITestAction>(false);
+                        : MethodInfoCache.Get(Method).TestActionAttributes;
                 }
 
                 return _actions;
@@ -334,10 +335,10 @@ namespace NUnit.Framework.Internal
         /// <param name="type">The </param>
         public void ApplyAttributesToTest(Type type)
         {
-            foreach (var t in GetNestedTypes(type).Reverse()) 
+            foreach (var t in GetNestedTypes(type).Reverse())
                 ApplyAttributesToTest((ICustomAttributeProvider) t.GetTypeInfo());
         }
-        
+
         /// <summary>
         /// Returns all nested types, inner first.
         /// </summary>
